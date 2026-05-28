@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Manim Theory | لغة الرياضيات المتحركة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Cairo', 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #0f1235 50%, #0a0e27 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .bg-animation {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -2; overflow: hidden;
+        }
+        .bg-animation::before {
+            content: ''; position: absolute;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 20% 50%, rgba(0,229,255,0.08) 0%, transparent 50%);
+            animation: rotate 40s linear infinite;
+        }
+        .bg-animation::after {
+            content: ''; position: absolute;
+            width: 200%; height: 200%;
+            background: radial-gradient(circle at 80% 50%, rgba(255,77,158,0.08) 0%, transparent 50%);
+            animation: rotate-reverse 35s linear infinite;
+        }
+        @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes rotate-reverse { from{transform:rotate(360deg)} to{transform:rotate(0deg)} }
+
+        .particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+        .particle {
+            position: absolute;
+            background: rgba(0,229,255,0.3);
+            border-radius: 50%;
+            animation: float 20s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%,100%{transform:translateY(0) translateX(0);opacity:0}
+            10%{opacity:0.5} 90%{opacity:0.5}
+            100%{transform:translateY(-200px) translateX(100px);opacity:0}
+        }
+
+        .container { flex:1; display:flex; flex-direction:column; position:relative; z-index:1; }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 20px 20px 15px;
+            background: rgba(10,14,39,0.8);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid rgba(0,229,255,0.2);
+        }
+        .hero h1 {
+            font-size: 1.8rem; font-weight: 800;
+            background: linear-gradient(135deg, #00e5ff, #ff4d9e, #ffd700);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            margin-bottom: 5px;
+        }
+        .hero .subtitle { font-size: 0.9rem; color: #ccd6f6; }
+        .hero .quote {
+            font-size: 0.8rem; color: #8892b0; font-style: italic;
+            max-width: 600px; margin: 8px auto 0; padding: 5px 15px;
+            background: rgba(0,229,255,0.05); border-radius: 20px; display: inline-block;
+        }
+
+        /* PDF Viewer */
+        .book-container { display:flex; flex-direction:column; flex:1; background:rgba(10,14,39,0.4); }
+        .pdf-viewer { flex:1; width:100%; background:#0a0e1e; overflow:hidden; min-height:calc(100vh - 160px); }
+
+        /* Toolbar */
+        .pdf-toolbar {
+            background: #0f1235;
+            padding: 7px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid rgba(0,229,255,0.2);
+            flex-wrap: nowrap;
+        }
+        .toolbar-left { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .toolbar-center { display:flex; align-items:center; gap:6px; flex:1; justify-content:center; }
+        .toolbar-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
+
+        .toolbar-label {
+            color: #00e5ff; font-weight: 600; font-size: 0.8rem;
+            white-space: nowrap;
+        }
+
+        /* Toolbar buttons */
+        .tb-btn {
+            background: rgba(0,229,255,0.08);
+            border: 1px solid rgba(0,229,255,0.25);
+            border-radius: 8px;
+            color: #00e5ff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+            display: flex; align-items: center; justify-content: center;
+            padding: 5px 8px;
+            font-size: 0.78rem;
+            gap: 4px;
+        }
+        .tb-btn:hover { background: rgba(0,229,255,0.2); border-color: #00e5ff; transform: translateY(-1px); }
+        .tb-btn:active { transform: scale(0.95); }
+        .tb-btn i { font-size: 0.85rem; }
+
+        /* Page controls */
+        .page-input {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,229,255,0.3);
+            border-radius: 6px;
+            color: #fff;
+            font-family: 'Cairo', sans-serif;
+            font-size: 0.78rem;
+            text-align: center;
+            width: 40px;
+            padding: 4px 2px;
+            outline: none;
+        }
+        .page-input:focus { border-color: #00e5ff; }
+        .page-sep { color: #8892b0; font-size: 0.75rem; }
+
+        /* Zoom display */
+        .zoom-display {
+            color: #ffd700;
+            font-size: 0.75rem;
+            font-weight: 600;
+            min-width: 38px;
+            text-align: center;
+        }
+
+        /* PDF wrapper */
+        .pdf-wrapper {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 205px);
+            overflow: hidden;
+            background: #0a0e1e;
+        }
+
+        /* إخفاء شريط أدوات PDF المدمج في المتصفح */
+        .pdf-iframe {
+            width: calc(100% + 2px);
+            height: calc(100% + 40px);
+            margin-top: -40px;
+            margin-right: -1px;
+            border: none;
+            display: block;
+        }
+
+        /* غطاء يخفي الشريط العلوي الأصلي */
+        .pdf-top-cover {
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 40px;
+            background: #0a0e1e;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        /* Fullscreen overlay - يخفي شريط المتصفح عند ملء الشاشة */
+        .pdf-viewer.is-fullscreen .pdf-wrapper {
+            height: 100vh;
+        }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px; margin: 20px;
+        }
+        .feature-card {
+            background: rgba(15,18,53,0.8); backdrop-filter: blur(10px);
+            border-radius: 15px; padding: 15px; text-align: center;
+            border: 1px solid rgba(0,229,255,0.15); transition: all 0.3s;
+            opacity: 0; transform: translateY(20px);
+        }
+        .feature-card:hover { transform: translateY(-5px); border-color: #00e5ff; }
+        .feature-icon { font-size: 1.8rem; color: #00e5ff; margin-bottom: 10px; }
+        .feature-card h3 { font-size: 1rem; margin-bottom: 8px; color: #ffd700; }
+        .feature-card p { color: #8892b0; line-height: 1.5; font-size: 0.75rem; }
+
+        /* Install */
+        .install-section {
+            background: rgba(10,14,39,0.6); backdrop-filter: blur(10px);
+            border-radius: 20px; padding: 20px; margin: 20px;
+            border: 1px solid rgba(0,229,255,0.2);
+        }
+        .install-section h2 { text-align:center; color:#ffd700; margin-bottom:15px; font-size:1.3rem; }
+        .code-block {
+            background: #0a0e1e; border-radius: 12px; padding: 15px;
+            overflow-x: auto; font-family: 'Consolas','Monaco',monospace;
+            font-size: 0.7rem; color: #00e5ff;
+            border: 1px solid rgba(0,229,255,0.2);
+        }
+        .code-block pre { margin:0; white-space:pre-wrap; word-break:break-word; }
+
+        /* Footer */
+        .footer {
+            text-align: center; padding: 15px 20px;
+            border-top: 1px solid rgba(0,229,255,0.1);
+            background: rgba(10,14,39,0.9);
+        }
+        .footer .isbn { color:#8892b0; font-size:0.7rem; margin:5px 0; }
+        .footer .copyright { color:#5a6a8a; font-size:0.65rem; }
+
+        /* Modal */
+        .modal {
+            display: none; position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
+            z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: #0f1235; border-radius: 20px; padding: 30px;
+            text-align: center; border: 1px solid #00e5ff;
+            max-width: 350px; width: 90%;
+            animation: modalIn 0.3s ease;
+        }
+        @keyframes modalIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
+        .modal-content h3 { margin:15px 0; color:#ffd700; }
+        .modal-content p { color:#ccd6f6; font-size:0.85rem; }
+        .modal-content input {
+            width:100%; padding:12px; margin:20px 0;
+            background:#1a1f3a; border:1px solid #00e5ff;
+            border-radius:10px; color:white; font-size:1rem;
+            font-family:'Cairo',sans-serif; outline:none; transition:border-color 0.3s;
+        }
+        .modal-content input:focus { border-color:#ffd700; box-shadow:0 0 0 3px rgba(255,215,0,0.15); }
+        .modal-content button {
+            background: linear-gradient(135deg, #00e5ff, #0099bb);
+            color:#0a0e27; border:none; padding:12px 30px;
+            border-radius:25px; cursor:pointer; font-weight:700;
+            font-family:'Cairo',sans-serif; font-size:0.95rem; transition:all 0.2s;
+        }
+        .modal-content button:hover { transform:translateY(-2px); opacity:0.9; }
+        .error-msg { color:#ff4d4d; font-size:0.8rem; margin-top:-10px; margin-bottom:10px; display:none; }
+        .modal-note { margin-top:15px; font-size:0.7rem; color:#8892b0; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size:1.3rem; }
+            .pdf-wrapper { height: calc(100vh - 190px); }
+            .toolbar-label { display:none; }
+            .features { margin:15px; gap:10px; }
+            .install-section { margin:15px; padding:15px; }
+        }
+        @media (max-width: 480px) {
+            .pdf-toolbar { padding: 6px 8px; gap:5px; }
+            .tb-btn { padding: 5px 6px; }
+            .zoom-display { min-width:30px; }
+        }
+    </style>
+</head>
+<body>
+<div class="bg-animation"></div>
+<div class="particles" id="particles"></div>
+
+<div class="container">
+    <div class="hero">
+        <h1>Manim Theory</h1>
+        <div class="subtitle">The Language of Animated Math | لغة الرياضيات المتحركة بالبايثون</div>
+        <div class="quote"><i class="fas fa-quote-right"></i> الرسوم بالكلمات، والحركة بالبيان</div>
+    </div>
+
+    <div class="book-container">
+        <div class="pdf-viewer" id="pdfViewer">
+
+            <!-- ===== شريط الأدوات المخصص ===== -->
+            <div class="pdf-toolbar">
+
+                <!-- يسار: اسم الكتاب -->
+                <div class="toolbar-left">
+                    <span class="toolbar-label"><i class="fas fa-lock"></i> كتاب محمي</span>
+                </div>
+
+                <!-- وسط: تحكم الصفحات + التكبير -->
+                <div class="toolbar-center">
+                    <!-- تنقل الصفحات -->
+                    <button class="tb-btn" id="prevPageBtn" title="الصفحة السابقة">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <input class="page-input" id="pageInput" type="number" value="1" min="1">
+                    <span class="page-sep">/</span>
+                    <span class="page-sep" id="totalPages">—</span>
+                    <button class="tb-btn" id="nextPageBtn" title="الصفحة التالية">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+
+                    <!-- فاصل -->
+                    <span style="color:rgba(0,229,255,0.2);margin:0 4px;">|</span>
+
+                    <!-- تحكم التكبير -->
+                    <button class="tb-btn" id="zoomOutBtn" title="تصغير">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <span class="zoom-display" id="zoomDisplay">100%</span>
+                    <button class="tb-btn" id="zoomInBtn" title="تكبير">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button class="tb-btn" id="zoomFitBtn" title="ملاءمة الصفحة">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                    </button>
+                </div>
+
+                <!-- يمين: ملء الشاشة الكامل -->
+                <div class="toolbar-right">
+                    <button class="tb-btn" id="fullscreenBtn" title="ملء الشاشة الكامل">
+                        <i class="fas fa-expand" id="fullscreenIcon"></i>
+                        <span id="fullscreenLabel">ملء الشاشة</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- عارض PDF -->
+            <div class="pdf-wrapper" id="pdfWrapper">
+                <!-- يغطي الشريط المدمج في المتصفح -->
+                <div class="pdf-top-cover"></div>
+                <iframe
+                    id="pdfFrame"
+                    class="pdf-iframe"
+                    src=""
+                    sandbox="allow-scripts allow-same-origin"
+                ></iframe>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+            <h3>للمبتدئين</h3>
+            <p>ابدأ من الصفر وشاهد كل كود يتحول إلى مشهد متحرك</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-rocket"></i></div>
+            <h3>للمتقدمين</h3>
+            <p>افترز إلى تخصصك وصمم مسارك التعليمي الخاص</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon"><i class="fas fa-university"></i></div>
+            <h3>للأكاديميين</h3>
+            <p>حوّل المفاهيم المجردة إلى عروض بصرية تخطف الأنفاس</p>
+        </div>
+    </div>
+
+    <div class="install-section">
+        <h2><i class="fab fa-windows"></i> دليل تثبيت Manim CE على Windows</h2>
+        <div class="code-block"><pre>
+# 1. فتح موجه الأوامر (CMD) أو PowerShell
+# 2. إنشاء مجلد للمشروع
+mkdir manim-project
+cd manim-project
+
+# 3. إنشاء بيئة افتراضية
+python -m venv venv
+
+# 4. تفعيل البيئة الافتراضية
+venv\Scripts\activate
+
+# 5. ترقية pip
+pip install --upgrade pip
+
+# 6. تثبيت Manim
+pip install manim
+
+# 7. تثبيت الحزم الإضافية
+pip install numpy scipy matplotlib ipython
+
+# 8. (اختياري) تثبيت إصدار التطوير
+pip install "manim[dev]"
+
+# 9. التحقق من التثبيت
+manim --version
+
+# 10. اختبار التثبيت بمثال بسيط
+manim -pql example.py SquareToCircle
+        </pre></div>
+    </div>
+
+    <div class="footer">
+        <div class="isbn">
+            <i class="fas fa-isbn"></i> ISBN: 978-9969-11-021-0 |
+            <i class="fas fa-calendar-alt"></i> الإيداع القانوني: أكتوبر 2025
+        </div>
+        <div class="copyright">© 2025 دار أحلام للنشر والتوزيع. جميع الحقوق محفوظة.</div>
+    </div>
+</div>
+
+<!-- Modal كلمة المرور -->
+<div id="passwordModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-lock" style="font-size:3rem;color:#00e5ff;"></i>
+        <h3>📖 كتاب محمي</h3>
+        <p>هذا الكتاب محمي بكلمة مرور</p>
+        <input type="password" id="passwordInput" placeholder="أدخل كلمة المرور" autocomplete="off">
+        <div class="error-msg" id="errorMsg">❌ كلمة المرور غير صحيحة</div>
+        <button id="unlockBtn">🔓 فتح الكتاب</button>
+        <p class="modal-note">للحصول على كلمة المرور، يرجى التواصل مع الناشر</p>
+    </div>
+</div>
+
+<script>
+// ===== Particles =====
+(function(){
+    const c = document.getElementById('particles');
+    for(let i=0;i<60;i++){
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        const s = Math.random()*3+1;
+        p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-delay:${Math.random()*20}s;animation-duration:${15+Math.random()*15}s`;
+        c.appendChild(p);
+    }
+})();
+
+// ===== كلمة المرور =====
+const correctPassword = "manim2025";
+const pdfFrame   = document.getElementById('pdfFrame');
+const modal      = document.getElementById('passwordModal');
+const pwInput    = document.getElementById('passwordInput');
+const unlockBtn  = document.getElementById('unlockBtn');
+const errorMsg   = document.getElementById('errorMsg');
+const pdfPath    = "The_Language_of_Animated_Math_protected.pdf";
+
+let currentPage  = 1;
+let totalPages   = 1;
+let zoomLevel    = 100;
+let pdfLoaded    = false;
+
+// تحميل PDF مع إخفاء الشريط المدمج
+function loadPDF(page, zoom) {
+    page = page || 1;
+    zoom = zoom || 100;
+    // toolbar=0 يخفي شريط الأدوات في Chrome/Edge
+    // navpanes=0 يخفي لوحة التنقل
+    // page= تحديد الصفحة
+    // zoom= نسبة التكبير
+    pdfFrame.src = `${pdfPath}#toolbar=0&navpanes=0&scrollbar=1&page=${page}&zoom=${zoom}`;
+    pdfLoaded = true;
+}
+
+function unlockPDF() {
+    if(pwInput.value.trim() === correctPassword){
+        modal.style.display = 'none';
+        loadPDF(1, 100);
+        // محاولة قراءة عدد الصفحات بعد التحميل
+        pdfFrame.onload = function(){
+            try {
+                // نحاول الوصول إلى PDF.js إن كان متاحاً
+                const iDoc = pdfFrame.contentDocument || pdfFrame.contentWindow.document;
+                const numPages = iDoc.querySelector('#numPages');
+                if(numPages) {
+                    const match = numPages.textContent.match(/\d+/);
+                    if(match) { totalPages = parseInt(match[0]); document.getElementById('totalPages').textContent = totalPages; }
+                }
+            } catch(e){}
+        };
+    } else {
+        errorMsg.style.display = 'block';
+        pwInput.value = '';
+        pwInput.style.borderColor = "#ff4d4d";
+        setTimeout(()=>{ pwInput.style.borderColor="#00e5ff"; errorMsg.style.display='none'; }, 2000);
+    }
+}
+
+modal.style.display = 'flex';
+unlockBtn.addEventListener('click', unlockPDF);
+pwInput.addEventListener('keypress', e => { if(e.key==='Enter') unlockPDF(); });
+
+// ===== التنقل بين الصفحات =====
+const pageInput = document.getElementById('pageInput');
+
+document.getElementById('prevPageBtn').addEventListener('click', () => {
+    if(!pdfLoaded) return;
+    if(currentPage > 1){ currentPage--; goToPage(currentPage); }
+});
+
+document.getElementById('nextPageBtn').addEventListener('click', () => {
+    if(!pdfLoaded) return;
+    currentPage++;
+    goToPage(currentPage);
+});
+
+pageInput.addEventListener('change', () => {
+    if(!pdfLoaded) return;
+    let p = parseInt(pageInput.value);
+    if(isNaN(p)||p<1) p=1;
+    if(totalPages>1 && p>totalPages) p=totalPages;
+    currentPage = p;
+    goToPage(currentPage);
+});
+
+function goToPage(page){
+    currentPage = page;
+    pageInput.value = page;
+    loadPDF(page, zoomLevel);
+}
+
+// ===== التكبير والتصغير =====
+const zoomDisplay = document.getElementById('zoomDisplay');
+const zoomSteps = [50,75,100,125,150,175,200];
+
+document.getElementById('zoomInBtn').addEventListener('click', () => {
+    if(!pdfLoaded) return;
+    const idx = zoomSteps.indexOf(zoomLevel);
+    if(idx < zoomSteps.length-1){ zoomLevel = zoomSteps[idx+1]; applyZoom(); }
+});
+
+document.getElementById('zoomOutBtn').addEventListener('click', () => {
+    if(!pdfLoaded) return;
+    const idx = zoomSteps.indexOf(zoomLevel);
+    if(idx > 0){ zoomLevel = zoomSteps[idx-1]; applyZoom(); }
+});
+
+document.getElementById('zoomFitBtn').addEventListener('click', () => {
+    if(!pdfLoaded) return;
+    zoomLevel = 100;
+    applyZoom();
+});
+
+function applyZoom(){
+    zoomDisplay.textContent = zoomLevel + '%';
+    loadPDF(currentPage, zoomLevel);
+}
+
+// ===== ملء الشاشة الكامل =====
+const pdfViewer     = document.getElementById('pdfViewer');
+const pdfWrapper    = document.getElementById('pdfWrapper');
+const fsBtn         = document.getElementById('fullscreenBtn');
+const fsIcon        = document.getElementById('fullscreenIcon');
+const fsLabel       = document.getElementById('fullscreenLabel');
+
+fsBtn.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+        // ملء الشاشة بالكامل على العنصر الأب كله
+        const req = pdfViewer.requestFullscreen
+            || pdfViewer.webkitRequestFullscreen
+            || pdfViewer.msRequestFullscreen;
+        if(req) req.call(pdfViewer);
+    } else {
+        const exit = document.exitFullscreen
+            || document.webkitExitFullscreen
+            || document.msExitFullscreen;
+        if(exit) exit.call(document);
+    }
+});
+
+document.addEventListener('fullscreenchange', handleFSChange);
+document.addEventListener('webkitfullscreenchange', handleFSChange);
+
+function handleFSChange(){
+    if(document.fullscreenElement || document.webkitFullscreenElement){
+        // دخول وضع ملء الشاشة
+        fsIcon.className = 'fas fa-compress';
+        fsLabel.textContent = 'تصغير';
+        pdfViewer.classList.add('is-fullscreen');
+        // ضبط ارتفاع الـ wrapper ليملأ الشاشة كاملاً ناقصاً الـ toolbar
+        pdfWrapper.style.height = 'calc(100vh - 50px)';
+        pdfWrapper.style.position = 'relative';
+    } else {
+        // خروج وضع ملء الشاشة
+        fsIcon.className = 'fas fa-expand';
+        fsLabel.textContent = 'ملء الشاشة';
+        pdfViewer.classList.remove('is-fullscreen');
+        pdfWrapper.style.height = '';
+    }
+}
+
+// ===== منع الطباعة والحفظ =====
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+    if((e.ctrlKey||e.metaKey) && (e.key==='p'||e.key==='s'||e.key==='P'||e.key==='S')){
+        e.preventDefault(); return false;
+    }
+});
+
+// ===== Feature cards =====
+const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if(entry.isIntersecting){
+            entry.target.style.opacity='1';
+            entry.target.style.transform='translateY(0)';
+            entry.target.style.transition='all 0.5s ease';
+        }
+    });
+}, { threshold:0.1, rootMargin:'0px 0px -30px 0px' });
+
+document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
+</script>
+</body>
+</html>
