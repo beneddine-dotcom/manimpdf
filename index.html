@@ -39,7 +39,7 @@
         @keyframes rotate { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes rotate-reverse { from{transform:rotate(360deg)} to{transform:rotate(0deg)} }
 
-        .particles { position: fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
+        .particles { position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none; }
         .particle {
             position: absolute;
             background: rgba(0,229,255,0.3);
@@ -77,7 +77,7 @@
 
         /* PDF Viewer */
         .book-container { display:flex; flex-direction:column; flex:1; background:rgba(10,14,39,0.4); }
-        .pdf-viewer { flex:1; width:100%; background:#0a0e1e; overflow:hidden; min-height:calc(100vh - 160px); }
+        .pdf-viewer { flex:1; width:100%; background:#0a0e1e; overflow:hidden; }
 
         /* Toolbar */
         .pdf-toolbar {
@@ -90,16 +90,12 @@
             border-bottom: 1px solid rgba(0,229,255,0.2);
             flex-wrap: nowrap;
         }
-        .toolbar-left { display:flex; align-items:center; gap:8px; flex-shrink:0; }
-        .toolbar-center { display:flex; align-items:center; gap:6px; flex:1; justify-content:center; }
+        .toolbar-left  { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+        .toolbar-center{ display:flex; align-items:center; gap:6px; flex:1; justify-content:center; flex-wrap:wrap; }
         .toolbar-right { display:flex; align-items:center; gap:6px; flex-shrink:0; }
 
-        .toolbar-label {
-            color: #00e5ff; font-weight: 600; font-size: 0.8rem;
-            white-space: nowrap;
-        }
+        .toolbar-label { color:#00e5ff; font-weight:600; font-size:0.8rem; white-space:nowrap; }
 
-        /* Toolbar buttons */
         .tb-btn {
             background: rgba(0,229,255,0.08);
             border: 1px solid rgba(0,229,255,0.25);
@@ -108,16 +104,15 @@
             cursor: pointer;
             transition: all 0.2s;
             font-family: 'Cairo', sans-serif;
-            display: flex; align-items: center; justify-content: center;
+            display: flex; align-items:center; justify-content:center;
             padding: 5px 8px;
             font-size: 0.78rem;
             gap: 4px;
         }
-        .tb-btn:hover { background: rgba(0,229,255,0.2); border-color: #00e5ff; transform: translateY(-1px); }
-        .tb-btn:active { transform: scale(0.95); }
-        .tb-btn i { font-size: 0.85rem; }
+        .tb-btn:hover  { background:rgba(0,229,255,0.2); border-color:#00e5ff; transform:translateY(-1px); }
+        .tb-btn:active { transform:scale(0.95); }
+        .tb-btn i { font-size:0.85rem; }
 
-        /* Page controls */
         .page-input {
             background: rgba(0,0,0,0.3);
             border: 1px solid rgba(0,229,255,0.3);
@@ -130,51 +125,46 @@
             padding: 4px 2px;
             outline: none;
         }
-        .page-input:focus { border-color: #00e5ff; }
-        .page-sep { color: #8892b0; font-size: 0.75rem; }
-
-        /* Zoom display */
+        .page-input:focus { border-color:#00e5ff; }
+        .page-sep   { color:#8892b0; font-size:0.75rem; }
         .zoom-display {
-            color: #ffd700;
-            font-size: 0.75rem;
-            font-weight: 600;
-            min-width: 38px;
-            text-align: center;
+            color: #ffd700; font-size:0.75rem; font-weight:600;
+            min-width:38px; text-align:center;
         }
 
-        /* PDF wrapper */
+        /* PDF wrapper - إخفاء شريط المتصفح المدمج */
         .pdf-wrapper {
             position: relative;
             width: 100%;
             height: calc(100vh - 205px);
             overflow: hidden;
-            background: #0a0e1e;
+            background: #1a1a2e;
         }
 
-        /* إخفاء شريط أدوات PDF المدمج في المتصفح */
+        /* نرفع الـ iframe 40px لإخفاء toolbar المتصفح */
         .pdf-iframe {
-            width: calc(100% + 2px);
+            position: absolute;
+            top: -40px;
+            left: 0;
+            width: 100%;
             height: calc(100% + 40px);
-            margin-top: -40px;
-            margin-right: -1px;
             border: none;
             display: block;
         }
 
-        /* غطاء يخفي الشريط العلوي الأصلي */
+        /* غطاء يخفي شريط الأدوات المدمج */
         .pdf-top-cover {
             position: absolute;
             top: 0; left: 0; right: 0;
             height: 40px;
-            background: #0a0e1e;
+            background: #1a1a2e;
             z-index: 5;
             pointer-events: none;
         }
 
-        /* Fullscreen overlay - يخفي شريط المتصفح عند ملء الشاشة */
-        .pdf-viewer.is-fullscreen .pdf-wrapper {
-            height: 100vh;
-        }
+        /* Fullscreen */
+        .pdf-viewer.is-fullscreen { position:fixed; top:0; left:0; width:100%; height:100%; z-index:999; }
+        .pdf-viewer.is-fullscreen .pdf-wrapper { height: calc(100vh - 50px); }
 
         /* Features */
         .features {
@@ -183,56 +173,56 @@
             gap: 15px; margin: 20px;
         }
         .feature-card {
-            background: rgba(15,18,53,0.8); backdrop-filter: blur(10px);
+            background: rgba(15,18,53,0.8); backdrop-filter:blur(10px);
             border-radius: 15px; padding: 15px; text-align: center;
             border: 1px solid rgba(0,229,255,0.15); transition: all 0.3s;
-            opacity: 0; transform: translateY(20px);
+            opacity:0; transform:translateY(20px);
         }
-        .feature-card:hover { transform: translateY(-5px); border-color: #00e5ff; }
-        .feature-icon { font-size: 1.8rem; color: #00e5ff; margin-bottom: 10px; }
-        .feature-card h3 { font-size: 1rem; margin-bottom: 8px; color: #ffd700; }
-        .feature-card p { color: #8892b0; line-height: 1.5; font-size: 0.75rem; }
+        .feature-card:hover { transform:translateY(-5px); border-color:#00e5ff; }
+        .feature-icon { font-size:1.8rem; color:#00e5ff; margin-bottom:10px; }
+        .feature-card h3 { font-size:1rem; margin-bottom:8px; color:#ffd700; }
+        .feature-card p  { color:#8892b0; line-height:1.5; font-size:0.75rem; }
 
         /* Install */
         .install-section {
-            background: rgba(10,14,39,0.6); backdrop-filter: blur(10px);
-            border-radius: 20px; padding: 20px; margin: 20px;
+            background: rgba(10,14,39,0.6); backdrop-filter:blur(10px);
+            border-radius: 20px; padding:20px; margin:20px;
             border: 1px solid rgba(0,229,255,0.2);
         }
         .install-section h2 { text-align:center; color:#ffd700; margin-bottom:15px; font-size:1.3rem; }
         .code-block {
-            background: #0a0e1e; border-radius: 12px; padding: 15px;
-            overflow-x: auto; font-family: 'Consolas','Monaco',monospace;
-            font-size: 0.7rem; color: #00e5ff;
-            border: 1px solid rgba(0,229,255,0.2);
+            background:#0a0e1e; border-radius:12px; padding:15px;
+            overflow-x:auto; font-family:'Consolas','Monaco',monospace;
+            font-size:0.7rem; color:#00e5ff;
+            border:1px solid rgba(0,229,255,0.2);
         }
         .code-block pre { margin:0; white-space:pre-wrap; word-break:break-word; }
 
         /* Footer */
         .footer {
-            text-align: center; padding: 15px 20px;
-            border-top: 1px solid rgba(0,229,255,0.1);
-            background: rgba(10,14,39,0.9);
+            text-align:center; padding:15px 20px;
+            border-top:1px solid rgba(0,229,255,0.1);
+            background:rgba(10,14,39,0.9);
         }
-        .footer .isbn { color:#8892b0; font-size:0.7rem; margin:5px 0; }
+        .footer .isbn      { color:#8892b0; font-size:0.7rem; margin:5px 0; }
         .footer .copyright { color:#5a6a8a; font-size:0.65rem; }
 
         /* Modal */
         .modal {
-            display: none; position: fixed;
+            display:none; position:fixed;
             top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(8px);
-            z-index: 1000; justify-content: center; align-items: center;
+            background:rgba(0,0,0,0.9); backdrop-filter:blur(8px);
+            z-index:1000; justify-content:center; align-items:center;
         }
         .modal-content {
-            background: #0f1235; border-radius: 20px; padding: 30px;
-            text-align: center; border: 1px solid #00e5ff;
-            max-width: 350px; width: 90%;
-            animation: modalIn 0.3s ease;
+            background:#0f1235; border-radius:20px; padding:30px;
+            text-align:center; border:1px solid #00e5ff;
+            max-width:350px; width:90%;
+            animation:modalIn 0.3s ease;
         }
         @keyframes modalIn { from{transform:scale(0.85);opacity:0} to{transform:scale(1);opacity:1} }
-        .modal-content h3 { margin:15px 0; color:#ffd700; }
-        .modal-content p { color:#ccd6f6; font-size:0.85rem; }
+        .modal-content h3   { margin:15px 0; color:#ffd700; }
+        .modal-content p    { color:#ccd6f6; font-size:0.85rem; }
         .modal-content input {
             width:100%; padding:12px; margin:20px 0;
             background:#1a1f3a; border:1px solid #00e5ff;
@@ -241,26 +231,25 @@
         }
         .modal-content input:focus { border-color:#ffd700; box-shadow:0 0 0 3px rgba(255,215,0,0.15); }
         .modal-content button {
-            background: linear-gradient(135deg, #00e5ff, #0099bb);
+            background:linear-gradient(135deg,#00e5ff,#0099bb);
             color:#0a0e27; border:none; padding:12px 30px;
             border-radius:25px; cursor:pointer; font-weight:700;
             font-family:'Cairo',sans-serif; font-size:0.95rem; transition:all 0.2s;
         }
         .modal-content button:hover { transform:translateY(-2px); opacity:0.9; }
-        .error-msg { color:#ff4d4d; font-size:0.8rem; margin-top:-10px; margin-bottom:10px; display:none; }
+        .error-msg  { color:#ff4d4d; font-size:0.8rem; margin-top:-10px; margin-bottom:10px; display:none; }
         .modal-note { margin-top:15px; font-size:0.7rem; color:#8892b0; }
 
-        @media (max-width: 768px) {
+        @media (max-width:768px) {
             .hero h1 { font-size:1.3rem; }
-            .pdf-wrapper { height: calc(100vh - 190px); }
+            .pdf-wrapper { height:calc(100vh - 190px); }
             .toolbar-label { display:none; }
             .features { margin:15px; gap:10px; }
             .install-section { margin:15px; padding:15px; }
         }
-        @media (max-width: 480px) {
-            .pdf-toolbar { padding: 6px 8px; gap:5px; }
-            .tb-btn { padding: 5px 6px; }
-            .zoom-display { min-width:30px; }
+        @media (max-width:480px) {
+            .pdf-toolbar { padding:6px 8px; gap:4px; }
+            .tb-btn { padding:5px 6px; }
         }
     </style>
 </head>
@@ -278,62 +267,40 @@
     <div class="book-container">
         <div class="pdf-viewer" id="pdfViewer">
 
-            <!-- ===== شريط الأدوات المخصص ===== -->
             <div class="pdf-toolbar">
-
-                <!-- يسار: اسم الكتاب -->
                 <div class="toolbar-left">
                     <span class="toolbar-label"><i class="fas fa-lock"></i> كتاب محمي</span>
                 </div>
 
-                <!-- وسط: تحكم الصفحات + التكبير -->
                 <div class="toolbar-center">
                     <!-- تنقل الصفحات -->
-                    <button class="tb-btn" id="prevPageBtn" title="الصفحة السابقة">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <button class="tb-btn" id="prevPageBtn" title="الصفحة السابقة"><i class="fas fa-chevron-right"></i></button>
                     <input class="page-input" id="pageInput" type="number" value="1" min="1">
                     <span class="page-sep">/</span>
                     <span class="page-sep" id="totalPages">—</span>
-                    <button class="tb-btn" id="nextPageBtn" title="الصفحة التالية">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
+                    <button class="tb-btn" id="nextPageBtn" title="الصفحة التالية"><i class="fas fa-chevron-left"></i></button>
 
-                    <!-- فاصل -->
                     <span style="color:rgba(0,229,255,0.2);margin:0 4px;">|</span>
 
-                    <!-- تحكم التكبير -->
-                    <button class="tb-btn" id="zoomOutBtn" title="تصغير">
-                        <i class="fas fa-search-minus"></i>
-                    </button>
+                    <!-- تكبير وتصغير -->
+                    <button class="tb-btn" id="zoomOutBtn" title="تصغير"><i class="fas fa-search-minus"></i></button>
                     <span class="zoom-display" id="zoomDisplay">100%</span>
-                    <button class="tb-btn" id="zoomInBtn" title="تكبير">
-                        <i class="fas fa-search-plus"></i>
-                    </button>
-                    <button class="tb-btn" id="zoomFitBtn" title="ملاءمة الصفحة">
-                        <i class="fas fa-compress-arrows-alt"></i>
-                    </button>
+                    <button class="tb-btn" id="zoomInBtn" title="تكبير"><i class="fas fa-search-plus"></i></button>
+                    <button class="tb-btn" id="zoomFitBtn" title="ملاءمة"><i class="fas fa-compress-arrows-alt"></i></button>
                 </div>
 
-                <!-- يمين: ملء الشاشة الكامل -->
                 <div class="toolbar-right">
                     <button class="tb-btn" id="fullscreenBtn" title="ملء الشاشة الكامل">
-                        <i class="fas fa-expand" id="fullscreenIcon"></i>
-                        <span id="fullscreenLabel">ملء الشاشة</span>
+                        <i class="fas fa-expand" id="fsIcon"></i>
+                        <span id="fsLabel">ملء الشاشة</span>
                     </button>
                 </div>
             </div>
 
-            <!-- عارض PDF -->
             <div class="pdf-wrapper" id="pdfWrapper">
-                <!-- يغطي الشريط المدمج في المتصفح -->
                 <div class="pdf-top-cover"></div>
-                <iframe
-                    id="pdfFrame"
-                    class="pdf-iframe"
-                    src=""
-                    sandbox="allow-scripts allow-same-origin"
-                ></iframe>
+                <!-- بدون sandbox لضمان التوافق مع Edge وجميع المتصفحات -->
+                <iframe id="pdfFrame" class="pdf-iframe" src="" allowfullscreen></iframe>
             </div>
 
         </div>
@@ -400,7 +367,7 @@ manim -pql example.py SquareToCircle
     </div>
 </div>
 
-<!-- Modal كلمة المرور -->
+<!-- Modal -->
 <div id="passwordModal" class="modal">
     <div class="modal-content">
         <i class="fas fa-lock" style="font-size:3rem;color:#00e5ff;"></i>
@@ -414,192 +381,186 @@ manim -pql example.py SquareToCircle
 </div>
 
 <script>
-// ===== Particles =====
+// Particles
 (function(){
     const c = document.getElementById('particles');
     for(let i=0;i<60;i++){
-        const p = document.createElement('div');
+        const p=document.createElement('div');
         p.classList.add('particle');
-        const s = Math.random()*3+1;
+        const s=Math.random()*3+1;
         p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;animation-delay:${Math.random()*20}s;animation-duration:${15+Math.random()*15}s`;
         c.appendChild(p);
     }
 })();
 
-// ===== كلمة المرور =====
+// ===== الإعدادات =====
 const correctPassword = "manim2025";
+const pdfPath = "The_Language_of_Animated_Math_protected.pdf";
+
 const pdfFrame   = document.getElementById('pdfFrame');
 const modal      = document.getElementById('passwordModal');
 const pwInput    = document.getElementById('passwordInput');
-const unlockBtn  = document.getElementById('unlockBtn');
 const errorMsg   = document.getElementById('errorMsg');
-const pdfPath    = "The_Language_of_Animated_Math_protected.pdf";
+const pageInput  = document.getElementById('pageInput');
+const totalPagesEl = document.getElementById('totalPages');
+const zoomDisplay  = document.getElementById('zoomDisplay');
+const pdfViewer  = document.getElementById('pdfViewer');
+const pdfWrapper = document.getElementById('pdfWrapper');
+const fsIcon     = document.getElementById('fsIcon');
+const fsLabel    = document.getElementById('fsLabel');
 
-let currentPage  = 1;
-let totalPages   = 1;
-let zoomLevel    = 100;
-let pdfLoaded    = false;
+let currentPage = 1;
+let totalPages  = 1;
+let zoomLevel   = 100;
+let pdfLoaded   = false;
 
-// تحميل PDF مع إخفاء الشريط المدمج
+// ===== تحميل PDF =====
+// نستخدم hash parameters المدعومة في Chrome وEdge وFirefox
+// toolbar=0 : يخفي شريط الأدوات في Chrome/Edge
+// navpanes=0: يخفي لوحة التنقل
+// view=FitH : ملاءمة عرضية
+function buildSrc(page, zoom) {
+    return pdfPath + '#toolbar=0&navpanes=0&page=' + page + '&zoom=' + zoom;
+}
+
 function loadPDF(page, zoom) {
-    page = page || 1;
-    zoom = zoom || 100;
-    // toolbar=0 يخفي شريط الأدوات في Chrome/Edge
-    // navpanes=0 يخفي لوحة التنقل
-    // page= تحديد الصفحة
-    // zoom= نسبة التكبير
-    pdfFrame.src = `${pdfPath}#toolbar=0&navpanes=0&scrollbar=1&page=${page}&zoom=${zoom}`;
+    pdfFrame.src = buildSrc(page || 1, zoom || 100);
     pdfLoaded = true;
 }
 
+// ===== كلمة المرور =====
 function unlockPDF() {
-    if(pwInput.value.trim() === correctPassword){
+    if (pwInput.value.trim() === correctPassword) {
         modal.style.display = 'none';
         loadPDF(1, 100);
-        // محاولة قراءة عدد الصفحات بعد التحميل
-        pdfFrame.onload = function(){
-            try {
-                // نحاول الوصول إلى PDF.js إن كان متاحاً
-                const iDoc = pdfFrame.contentDocument || pdfFrame.contentWindow.document;
-                const numPages = iDoc.querySelector('#numPages');
-                if(numPages) {
-                    const match = numPages.textContent.match(/\d+/);
-                    if(match) { totalPages = parseInt(match[0]); document.getElementById('totalPages').textContent = totalPages; }
-                }
-            } catch(e){}
-        };
     } else {
         errorMsg.style.display = 'block';
         pwInput.value = '';
-        pwInput.style.borderColor = "#ff4d4d";
-        setTimeout(()=>{ pwInput.style.borderColor="#00e5ff"; errorMsg.style.display='none'; }, 2000);
+        pwInput.style.borderColor = '#ff4d4d';
+        setTimeout(() => {
+            pwInput.style.borderColor = '#00e5ff';
+            errorMsg.style.display = 'none';
+        }, 2000);
     }
 }
 
 modal.style.display = 'flex';
-unlockBtn.addEventListener('click', unlockPDF);
+document.getElementById('unlockBtn').addEventListener('click', unlockPDF);
 pwInput.addEventListener('keypress', e => { if(e.key==='Enter') unlockPDF(); });
 
-// ===== التنقل بين الصفحات =====
-const pageInput = document.getElementById('pageInput');
-
+// ===== الصفحات =====
 document.getElementById('prevPageBtn').addEventListener('click', () => {
-    if(!pdfLoaded) return;
-    if(currentPage > 1){ currentPage--; goToPage(currentPage); }
+    if (!pdfLoaded || currentPage <= 1) return;
+    currentPage--;
+    pageInput.value = currentPage;
+    loadPDF(currentPage, zoomLevel);
 });
 
 document.getElementById('nextPageBtn').addEventListener('click', () => {
-    if(!pdfLoaded) return;
+    if (!pdfLoaded) return;
+    if (totalPages > 1 && currentPage >= totalPages) return;
     currentPage++;
-    goToPage(currentPage);
+    pageInput.value = currentPage;
+    loadPDF(currentPage, zoomLevel);
 });
 
 pageInput.addEventListener('change', () => {
-    if(!pdfLoaded) return;
+    if (!pdfLoaded) return;
     let p = parseInt(pageInput.value);
-    if(isNaN(p)||p<1) p=1;
-    if(totalPages>1 && p>totalPages) p=totalPages;
+    if (isNaN(p) || p < 1) p = 1;
+    if (totalPages > 1 && p > totalPages) p = totalPages;
     currentPage = p;
-    goToPage(currentPage);
+    pageInput.value = p;
+    loadPDF(currentPage, zoomLevel);
 });
 
-function goToPage(page){
-    currentPage = page;
-    pageInput.value = page;
-    loadPDF(page, zoomLevel);
-}
-
-// ===== التكبير والتصغير =====
-const zoomDisplay = document.getElementById('zoomDisplay');
-const zoomSteps = [50,75,100,125,150,175,200];
+// ===== التكبير =====
+const zoomSteps = [50, 75, 100, 125, 150, 175, 200];
 
 document.getElementById('zoomInBtn').addEventListener('click', () => {
-    if(!pdfLoaded) return;
-    const idx = zoomSteps.indexOf(zoomLevel);
-    if(idx < zoomSteps.length-1){ zoomLevel = zoomSteps[idx+1]; applyZoom(); }
+    if (!pdfLoaded) return;
+    let idx = zoomSteps.indexOf(zoomLevel);
+    if (idx === -1) idx = 2;
+    if (idx < zoomSteps.length - 1) {
+        zoomLevel = zoomSteps[idx + 1];
+        zoomDisplay.textContent = zoomLevel + '%';
+        loadPDF(currentPage, zoomLevel);
+    }
 });
 
 document.getElementById('zoomOutBtn').addEventListener('click', () => {
-    if(!pdfLoaded) return;
-    const idx = zoomSteps.indexOf(zoomLevel);
-    if(idx > 0){ zoomLevel = zoomSteps[idx-1]; applyZoom(); }
+    if (!pdfLoaded) return;
+    let idx = zoomSteps.indexOf(zoomLevel);
+    if (idx === -1) idx = 2;
+    if (idx > 0) {
+        zoomLevel = zoomSteps[idx - 1];
+        zoomDisplay.textContent = zoomLevel + '%';
+        loadPDF(currentPage, zoomLevel);
+    }
 });
 
 document.getElementById('zoomFitBtn').addEventListener('click', () => {
-    if(!pdfLoaded) return;
+    if (!pdfLoaded) return;
     zoomLevel = 100;
-    applyZoom();
+    zoomDisplay.textContent = '100%';
+    loadPDF(currentPage, zoomLevel);
 });
 
-function applyZoom(){
-    zoomDisplay.textContent = zoomLevel + '%';
-    loadPDF(currentPage, zoomLevel);
-}
-
 // ===== ملء الشاشة الكامل =====
-const pdfViewer     = document.getElementById('pdfViewer');
-const pdfWrapper    = document.getElementById('pdfWrapper');
-const fsBtn         = document.getElementById('fullscreenBtn');
-const fsIcon        = document.getElementById('fullscreenIcon');
-const fsLabel       = document.getElementById('fullscreenLabel');
-
-fsBtn.addEventListener('click', () => {
-    if (!document.fullscreenElement) {
-        // ملء الشاشة بالكامل على العنصر الأب كله
+document.getElementById('fullscreenBtn').addEventListener('click', () => {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
         const req = pdfViewer.requestFullscreen
             || pdfViewer.webkitRequestFullscreen
+            || pdfViewer.mozRequestFullScreen
             || pdfViewer.msRequestFullscreen;
-        if(req) req.call(pdfViewer);
+        if (req) req.call(pdfViewer);
     } else {
         const exit = document.exitFullscreen
             || document.webkitExitFullscreen
+            || document.mozCancelFullScreen
             || document.msExitFullscreen;
-        if(exit) exit.call(document);
+        if (exit) exit.call(document);
     }
 });
 
-document.addEventListener('fullscreenchange', handleFSChange);
-document.addEventListener('webkitfullscreenchange', handleFSChange);
-
-function handleFSChange(){
-    if(document.fullscreenElement || document.webkitFullscreenElement){
-        // دخول وضع ملء الشاشة
-        fsIcon.className = 'fas fa-compress';
-        fsLabel.textContent = 'تصغير';
-        pdfViewer.classList.add('is-fullscreen');
-        // ضبط ارتفاع الـ wrapper ليملأ الشاشة كاملاً ناقصاً الـ toolbar
-        pdfWrapper.style.height = 'calc(100vh - 50px)';
-        pdfWrapper.style.position = 'relative';
-    } else {
-        // خروج وضع ملء الشاشة
-        fsIcon.className = 'fas fa-expand';
-        fsLabel.textContent = 'ملء الشاشة';
-        pdfViewer.classList.remove('is-fullscreen');
-        pdfWrapper.style.height = '';
-    }
-}
+['fullscreenchange','webkitfullscreenchange','mozfullscreenchange','MSFullscreenChange'].forEach(ev => {
+    document.addEventListener(ev, () => {
+        const inFS = !!(document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement);
+        if (inFS) {
+            fsIcon.className = 'fas fa-compress';
+            fsLabel.textContent = 'تصغير';
+            pdfViewer.classList.add('is-fullscreen');
+            pdfWrapper.style.height = 'calc(100vh - 50px)';
+        } else {
+            fsIcon.className = 'fas fa-expand';
+            fsLabel.textContent = 'ملء الشاشة';
+            pdfViewer.classList.remove('is-fullscreen');
+            pdfWrapper.style.height = '';
+        }
+    });
+});
 
 // ===== منع الطباعة والحفظ =====
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
-    if((e.ctrlKey||e.metaKey) && (e.key==='p'||e.key==='s'||e.key==='P'||e.key==='S')){
-        e.preventDefault(); return false;
+    if ((e.ctrlKey || e.metaKey) && ['p','P','s','S'].includes(e.key)) {
+        e.preventDefault();
+        return false;
     }
 });
 
 // ===== Feature cards =====
-const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if(entry.isIntersecting){
-            entry.target.style.opacity='1';
-            entry.target.style.transform='translateY(0)';
-            entry.target.style.transition='all 0.5s ease';
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+        if (en.isIntersecting) {
+            en.target.style.opacity = '1';
+            en.target.style.transform = 'translateY(0)';
+            en.target.style.transition = 'all 0.5s ease';
         }
     });
-}, { threshold:0.1, rootMargin:'0px 0px -30px 0px' });
+}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 
-document.querySelectorAll('.feature-card').forEach(card => observer.observe(card));
+document.querySelectorAll('.feature-card').forEach(card => obs.observe(card));
 </script>
 </body>
 </html>
-
